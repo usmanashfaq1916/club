@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "829556288805",
+    "project_id": "young-fighters-academy",
+    "storage_bucket": "young-fighters-academy.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:829556288805:android:89d061546271ad3325fecc",
+        "android_client_info": {
+          "package_name": "com.youngfighters.young_fighters_academy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGgQ7bKZA7gBlEKWm5ShDDUM1ZB1vCheY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

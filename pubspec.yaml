@@ -1,0 +1,35 @@
+name: young_fighters_academy
+description: "Young Fighters Academy - Cricket Academy Management System"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.12.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  provider: ^6.1.2
+  intl: ^0.20.2
+  fl_chart: ^0.70.2
+  qr_flutter: ^4.1.0
+  pdf: ^3.11.1
+  printing: ^5.14.2
+  path_provider: ^2.1.5
+  share_plus: ^10.1.4
+  image_picker: ^1.1.2
+  cached_network_image: ^3.4.1
+  url_launcher: ^6.3.1
+  shared_preferences: ^2.5.3
+  uuid: ^4.5.1
+  http: ^1.2.0
+  flutter_secure_storage: ^9.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
