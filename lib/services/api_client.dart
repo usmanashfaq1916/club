@@ -9,7 +9,11 @@ class ApiClient {
   static const _tokenKey = 'jwt_token';
   static const _refreshKey = 'refresh_token';
 
-  static String baseUrl = 'http://10.0.2.2:8000/api';
+  static String baseUrl = 'https://club-usmanashfaq1916.koyeb.app/api';
+  static http.Client _client = http.Client();
+
+  static http.Client get client => _client;
+  static set client(http.Client c) => _client = c;
 
   static Future<String?> getToken() => _storage.read(key: _tokenKey);
   static Future<String?> getRefreshToken() => _storage.read(key: _refreshKey);
@@ -35,13 +39,13 @@ class ApiClient {
   static Future<dynamic> get(String path, {Map<String, String>? queryParams}) async {
     final uri = Uri.parse('$baseUrl$path')
         .replace(queryParameters: queryParams);
-    final response = await http.get(uri, headers: await _headers());
+    final response = await _client.get(uri, headers: await _headers());
     return _handleResponse(response);
   }
 
   static Future<dynamic> post(String path, {dynamic body}) async {
     final uri = Uri.parse('$baseUrl$path');
-    final response = await http.post(
+    final response = await _client.post(
       uri,
       headers: await _headers(),
       body: body != null ? jsonEncode(body) : null,
@@ -51,7 +55,7 @@ class ApiClient {
 
   static Future<dynamic> put(String path, {dynamic body}) async {
     final uri = Uri.parse('$baseUrl$path');
-    final response = await http.put(
+    final response = await _client.put(
       uri,
       headers: await _headers(),
       body: body != null ? jsonEncode(body) : null,
@@ -61,7 +65,7 @@ class ApiClient {
 
   static Future<dynamic> delete(String path) async {
     final uri = Uri.parse('$baseUrl$path');
-    final response = await http.delete(uri, headers: await _headers());
+    final response = await _client.delete(uri, headers: await _headers());
     return _handleResponse(response);
   }
 
@@ -81,9 +85,9 @@ class ApiClient {
     if (fields != null) {
       request.fields.addAll(fields);
     }
-    final response = await request.send();
-    final responseBody = await response.stream.bytesToString();
-    return _handleResponse(http.Response(responseBody, response.statusCode));
+    final streamedResponse = await _client.send(request);
+    final responseBody = await streamedResponse.stream.bytesToString();
+    return _handleResponse(http.Response(responseBody, streamedResponse.statusCode));
   }
 
   static dynamic _handleResponse(http.Response response) {

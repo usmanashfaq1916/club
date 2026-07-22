@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
+import '../services/api_client.dart';
 
 class AuthProvider extends ChangeNotifier {
   final AuthService _authService = AuthService();
@@ -38,11 +39,24 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
       return _user != null;
     } catch (e) {
-      _error = e.toString();
+      _error = _formatError(e);
       _isLoading = false;
       notifyListeners();
       return false;
     }
+  }
+
+  String _formatError(Object e) {
+    if (e is ApiException) {
+      final msg = e.message;
+      if (msg.contains('No active account')) return 'Invalid email or password';
+      if (msg.contains('Unable to log in')) return 'Invalid email or password';
+      if (msg.contains('invalid')) return 'Invalid email or password';
+      if (e.statusCode == 401) return 'Invalid email or password';
+      if (e.statusCode == 403) return 'Access denied';
+      if (e.statusCode == 500) return 'Server error. Try again later.';
+    }
+    return 'Login failed. Check your connection.';
   }
 
   Future<void> logout() async {
@@ -67,7 +81,7 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error = _formatError(e);
       _isLoading = false;
       notifyListeners();
       return false;

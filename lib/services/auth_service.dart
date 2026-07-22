@@ -3,7 +3,7 @@ import 'api_client.dart';
 class AuthService {
   Future<Map<String, dynamic>?> login(String email, String password) async {
     final data = await ApiClient.post('/auth/login/', body: {
-      'email': email,
+      'username': email,
       'password': password,
     });
     if (data != null && data['access'] != null) {
