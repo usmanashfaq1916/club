@@ -4,6 +4,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path_utils;
 import 'dart:io';
 import '../../services/api_client.dart';
 import '../../config/theme.dart';
@@ -362,6 +363,14 @@ class ReportScreen extends StatelessWidget {
 
   Future<void> _sharePdf(
       BuildContext context, pw.Document pdf, String fileName) async {
+    if (Platform.isWindows) {
+      final dir = await getTemporaryDirectory();
+      final file = File(path_utils.join(dir.path,
+          '${fileName}_${DateTime.now().millisecondsSinceEpoch}.pdf'));
+      await file.writeAsBytes(await pdf.save());
+      await Share.shareXFiles([XFile(file.path)], text: fileName);
+      return;
+    }
     try {
       await Printing.sharePdf(
         bytes: await pdf.save(),
@@ -369,8 +378,8 @@ class ReportScreen extends StatelessWidget {
       );
     } catch (e) {
       final dir = await getTemporaryDirectory();
-      final file = File(
-          '${dir.path}/${fileName}_${DateTime.now().millisecondsSinceEpoch}.pdf');
+      final file = File(path_utils.join(dir.path,
+          '${fileName}_${DateTime.now().millisecondsSinceEpoch}.pdf'));
       await file.writeAsBytes(await pdf.save());
       await Share.shareXFiles([XFile(file.path)], text: fileName);
     }

@@ -15,17 +15,34 @@ class ApiClient {
   static http.Client get client => _client;
   static set client(http.Client c) => _client = c;
 
-  static Future<String?> getToken() => _storage.read(key: _tokenKey);
-  static Future<String?> getRefreshToken() => _storage.read(key: _refreshKey);
+  static Future<String?> getToken() async {
+    try {
+      return await _storage.read(key: _tokenKey);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  static Future<String?> getRefreshToken() async {
+    try {
+      return await _storage.read(key: _refreshKey);
+    } catch (_) {
+      return null;
+    }
+  }
 
   static Future<void> setTokens(String access, String refresh) async {
-    await _storage.write(key: _tokenKey, value: access);
-    await _storage.write(key: _refreshKey, value: refresh);
+    try {
+      await _storage.write(key: _tokenKey, value: access);
+      await _storage.write(key: _refreshKey, value: refresh);
+    } catch (_) {}
   }
 
   static Future<void> clearTokens() async {
-    await _storage.delete(key: _tokenKey);
-    await _storage.delete(key: _refreshKey);
+    try {
+      await _storage.delete(key: _tokenKey);
+      await _storage.delete(key: _refreshKey);
+    } catch (_) {}
   }
 
   static Future<Map<String, String>> _headers() async {
