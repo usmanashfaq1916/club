@@ -381,7 +381,7 @@ class _StudentFormScreenState extends State<StudentFormScreen> {
                       controller: _feeCtrl,
                       keyboardType: TextInputType.number,
                       decoration: const InputDecoration(
-                          labelText: 'Monthly Fee (₹)',
+                          labelText: 'Monthly Fee (Rs.)',
                           prefixIcon: Icon(Icons.money)),
                       validator: (v) {
                         if (v == null || v.isEmpty) return 'Required';

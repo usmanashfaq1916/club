@@ -97,7 +97,7 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                             controller: _amountCtrl,
                             keyboardType: TextInputType.number,
                             decoration: const InputDecoration(
-                                labelText: 'Amount (₹) *',
+                                labelText: 'Amount (Rs.) *',
                                 prefixIcon: Icon(Icons.money)),
                             validator: (v) {
                               if (v == null || v.isEmpty) return 'Required';
@@ -152,7 +152,7 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                               ?.copyWith(fontWeight: FontWeight.bold)),
                       const Spacer(),
                       Text(
-                        'Total: ₹${ep.totalExpenses.toStringAsFixed(0)}',
+                        'Total: Rs.${ep.totalExpenses.toStringAsFixed(0)}',
                         style: TextStyle(
                           color: AppTheme.red,
                           fontWeight: FontWeight.bold,
@@ -189,7 +189,7 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                             subtitle: Text(
                                 '${e.category} | ${e.date.toLocal().toString().split(' ')[0]}'),
                             trailing: Text(
-                              '₹${e.amount.toStringAsFixed(0)}',
+                              'Rs.${e.amount.toStringAsFixed(0)}',
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: AppTheme.red,

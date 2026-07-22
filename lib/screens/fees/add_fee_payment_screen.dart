@@ -130,7 +130,7 @@ class _AddFeePaymentScreenState extends State<AddFeePaymentScreen> {
                 controller: _amountCtrl,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
-                    labelText: 'Monthly Fee (₹) *',
+                    labelText: 'Monthly Fee (Rs.) *',
                     prefixIcon: Icon(Icons.money)),
                 validator: (v) {
                   if (v == null || v.isEmpty) return 'Required';
@@ -146,7 +146,7 @@ class _AddFeePaymentScreenState extends State<AddFeePaymentScreen> {
                       controller: _discountCtrl,
                       keyboardType: TextInputType.number,
                       decoration: const InputDecoration(
-                          labelText: 'Discount (₹)',
+                          labelText: 'Discount (Rs.)',
                           prefixIcon: Icon(Icons.discount)),
                     ),
                   ),
@@ -156,7 +156,7 @@ class _AddFeePaymentScreenState extends State<AddFeePaymentScreen> {
                       controller: _paidCtrl,
                       keyboardType: TextInputType.number,
                       decoration: const InputDecoration(
-                          labelText: 'Paid Amount (₹) *',
+                          labelText: 'Paid Amount (Rs.) *',
                           prefixIcon: Icon(Icons.payments)),
                       validator: (v) {
                         if (v == null || v.isEmpty) return 'Required';

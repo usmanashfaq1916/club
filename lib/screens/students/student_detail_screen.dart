@@ -163,7 +163,7 @@ class StudentDetailScreen extends StatelessWidget {
             _infoRow('Batch', student.batch),
             _infoRow('Skill Level', student.skillLevel),
             _infoRow('Join Date', student.joinDate.toLocal().toString().split(' ')[0]),
-            _infoRow('Monthly Fee', '₹${student.monthlyFee.toStringAsFixed(0)}'),
+            _infoRow('Monthly Fee', 'Rs.${student.monthlyFee.toStringAsFixed(0)}'),
           ],
         ),
       ),

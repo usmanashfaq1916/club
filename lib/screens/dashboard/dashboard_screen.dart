@@ -168,7 +168,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Expanded(
               child: StatCard(
                 title: 'Fee Collected',
-                value: '₹${dash.feeCollected.toStringAsFixed(0)}',
+                value: 'Rs.${dash.feeCollected.toStringAsFixed(0)}',
                 icon: Icons.account_balance_wallet,
                 color: AppTheme.gold,
               ),
@@ -181,7 +181,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Expanded(
               child: StatCard(
                 title: 'Net Profit',
-                value: '₹${dash.netProfit.toStringAsFixed(0)}',
+                value: 'Rs.${dash.netProfit.toStringAsFixed(0)}',
                 icon: Icons.trending_up,
                 color: dash.netProfit >= 0 ? Colors.green : AppTheme.red,
               ),
@@ -190,7 +190,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Expanded(
               child: StatCard(
                 title: 'Pending Fees',
-                value: '₹${dash.pendingFees.toStringAsFixed(0)}',
+                value: 'Rs.${dash.pendingFees.toStringAsFixed(0)}',
                 icon: Icons.warning_amber,
                 color: AppTheme.orange,
               ),
@@ -369,7 +369,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     title: Text('Student: ${f['studentId'] ?? ''}',
                         style: const TextStyle(fontSize: 14)),
                     subtitle: Text(
-                        'Due: ₹${f['monthlyFee'] ?? 0} | ${f['month'] ?? ''}',
+                        'Due: Rs.${f['monthlyFee'] ?? 0} | ${f['month'] ?? ''}',
                         style: TextStyle(
                             fontSize: 12, color: Colors.grey[600])),
                     trailing: Container(

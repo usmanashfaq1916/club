@@ -73,16 +73,16 @@ class FeeDetailScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     _detailRow('Monthly Fee',
-                        '₹${fee.monthlyFee.toStringAsFixed(2)}'),
+                        'Rs.${fee.monthlyFee.toStringAsFixed(2)}'),
                     const Divider(),
                     _detailRow('Discount',
-                        '₹${fee.discount.toStringAsFixed(2)}'),
+                        'Rs.${fee.discount.toStringAsFixed(2)}'),
                     const Divider(),
                     _detailRow('Paid Amount',
-                        '₹${fee.paidAmount.toStringAsFixed(2)}'),
+                        'Rs.${fee.paidAmount.toStringAsFixed(2)}'),
                     const Divider(),
                     _detailRow('Balance',
-                        '₹${fee.balance.toStringAsFixed(2)}',
+                        'Rs.${fee.balance.toStringAsFixed(2)}',
                         valueColor: fee.balance > 0
                             ? AppTheme.red
                             : Colors.green),

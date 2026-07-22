@@ -79,12 +79,12 @@ class _FeeManagementScreenState extends State<FeeManagementScreen> {
                   children: [
                     Expanded(
                       child: _summaryCard('Collected',
-                          '₹${feeProv.totalCollected.toStringAsFixed(0)}', Colors.green),
+                          'Rs.${feeProv.totalCollected.toStringAsFixed(0)}', Colors.green),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: _summaryCard('Pending',
-                          '₹${feeProv.pendingAmount.toStringAsFixed(0)}', AppTheme.red),
+                          'Rs.${feeProv.pendingAmount.toStringAsFixed(0)}', AppTheme.red),
                     ),
                   ],
                 ),
@@ -123,7 +123,7 @@ class _FeeManagementScreenState extends State<FeeManagementScreen> {
                           title: Text(student?.fullName ?? 'Unknown Student',
                               style: const TextStyle(fontWeight: FontWeight.w500)),
                           subtitle: Text(
-                              '${fee.month} | Due: ₹${fee.monthlyFee.toStringAsFixed(0)}',
+                              '${fee.month} | Due: Rs.${fee.monthlyFee.toStringAsFixed(0)}',
                               style: TextStyle(color: Colors.grey[600])),
                           trailing: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),

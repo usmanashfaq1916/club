@@ -120,7 +120,7 @@ class ReportScreen extends StatelessWidget {
                   d['father_name'] ?? '',
                   d['mobile_number'] ?? '',
                   d['batch'] ?? '',
-                  '\u20b9${(d['monthly_fee'] ?? 0).toStringAsFixed(0)}',
+                  'Rs.${(d['monthly_fee'] ?? 0).toStringAsFixed(0)}',
                 ];
               }).toList(),
             ),
@@ -205,7 +205,7 @@ class ReportScreen extends StatelessWidget {
                 return [
                   d['student'].toString().substring(0, 8),
                   d['month'] ?? '',
-                  '\u20b9${(d['monthly_fee'] ?? 0).toStringAsFixed(0)}',
+                  'Rs.${(d['monthly_fee'] ?? 0).toStringAsFixed(0)}',
                   (d['due_date'] ?? '').toString().substring(0, 10),
                 ];
               }).toList(),
@@ -259,7 +259,7 @@ class ReportScreen extends StatelessWidget {
                 children: [
                   pw.Text('Total Income',
                       style: pw.TextStyle(fontSize: 16)),
-                  pw.Text('\u20b9${totalIncome.toStringAsFixed(2)}',
+                  pw.Text('Rs.${totalIncome.toStringAsFixed(2)}',
                       style: pw.TextStyle(
                           fontSize: 16,
                           color: PdfColors.green,
@@ -272,7 +272,7 @@ class ReportScreen extends StatelessWidget {
                 children: [
                   pw.Text('Total Expenses',
                       style: pw.TextStyle(fontSize: 16)),
-                  pw.Text('\u20b9${totalExpenses.toStringAsFixed(2)}',
+                  pw.Text('Rs.${totalExpenses.toStringAsFixed(2)}',
                       style: pw.TextStyle(
                           fontSize: 16,
                           color: PdfColors.red,
@@ -287,7 +287,7 @@ class ReportScreen extends StatelessWidget {
                   pw.Text('Net Profit',
                       style: pw.TextStyle(
                           fontSize: 18, fontWeight: pw.FontWeight.bold)),
-                  pw.Text('\u20b9${(totalIncome - totalExpenses).toStringAsFixed(2)}',
+                  pw.Text('Rs.${(totalIncome - totalExpenses).toStringAsFixed(2)}',
                       style: pw.TextStyle(
                         fontSize: 18,
                         fontWeight: pw.FontWeight.bold,
