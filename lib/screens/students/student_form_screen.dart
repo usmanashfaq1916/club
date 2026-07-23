@@ -209,9 +209,9 @@ class _StudentFormScreenState extends State<StudentFormScreen> {
                         backgroundColor:
                             AppTheme.primaryGreen.withValues(alpha: 0.1),
                         backgroundImage: _imageFile != null
-                            ? FileImage(_imageFile!)
+                            ? FileImage(_imageFile!) as ImageProvider<Object>
                             : (widget.student?.photoUrl != null
-                                ? NetworkImage(widget.student!.photoUrl!)
+                                ? NetworkImage(widget.student!.photoUrl!) as ImageProvider<Object>
                                 : null),
                         child: _imageFile == null &&
                                 widget.student?.photoUrl == null

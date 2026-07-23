@@ -9,7 +9,7 @@ class ApiClient {
   static const _tokenKey = 'jwt_token';
   static const _refreshKey = 'refresh_token';
 
-  static String baseUrl = 'http://localhost:8000/api';
+  static String baseUrl = const String.fromEnvironment('BASE_URL', defaultValue: 'http://localhost:8000/api');
   static http.Client _client = http.Client();
 
   static http.Client get client => _client;
