@@ -167,7 +167,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
         switch (status) {
           case 'Present': color = Colors.green; break;
           case 'Absent': color = AppTheme.red; break;
-          case 'Leave': color = AppTheme.orange; break;
+          case 'Late': color = Colors.orange; break;
+          case 'Leave': color = Colors.blue; break;
           default: color = Colors.grey;
         }
         return GestureDetector(

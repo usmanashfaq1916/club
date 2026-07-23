@@ -149,7 +149,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     labelText: 'Role',
                     prefixIcon: Icon(Icons.badge_outlined),
                   ),
-                  items: AppConstants.userRoles.map((role) {
+                  items: AppConstants.userRoles
+                      .where((r) => r != 'Admin')
+                      .map((role) {
                     return DropdownMenuItem(value: role, child: Text(role));
                   }).toList(),
                   onChanged: (v) {

@@ -24,28 +24,25 @@ class Performance {
   });
 
   Map<String, dynamic> toMap() => {
-    'id': id,
-    'studentId': studentId,
-    'date': date.toIso8601String(),
-    'battingRating': battingRating,
-    'bowlingRating': bowlingRating,
-    'fieldingRating': fieldingRating,
-    'fitnessRating': fitnessRating,
-    'disciplineRating': disciplineRating,
-    'coachRemarks': coachRemarks,
-    'overallRating': overallRating,
+    'student': studentId,
+    'batting_rating': battingRating,
+    'bowling_rating': bowlingRating,
+    'fielding_rating': fieldingRating,
+    'fitness_rating': fitnessRating,
+    'discipline_rating': disciplineRating,
+    'coach_remarks': coachRemarks,
   };
 
   factory Performance.fromMap(Map<String, dynamic> map) => Performance(
-    id: map['id'] ?? '',
-    studentId: map['studentId'] ?? '',
+    id: map['id']?.toString() ?? '',
+    studentId: map['student']?.toString() ?? '',
     date: DateTime.parse(map['date']),
-    battingRating: map['battingRating'] ?? 5,
-    bowlingRating: map['bowlingRating'] ?? 5,
-    fieldingRating: map['fieldingRating'] ?? 5,
-    fitnessRating: map['fitnessRating'] ?? 5,
-    disciplineRating: map['disciplineRating'] ?? 5,
-    coachRemarks: map['coachRemarks'],
-    overallRating: (map['overallRating'] ?? 5).toDouble(),
+    battingRating: map['batting_rating'] ?? 5,
+    bowlingRating: map['bowling_rating'] ?? 5,
+    fieldingRating: map['fielding_rating'] ?? 5,
+    fitnessRating: map['fitness_rating'] ?? 5,
+    disciplineRating: map['discipline_rating'] ?? 5,
+    coachRemarks: map['coach_remarks'],
+    overallRating: (map['overall_rating'] ?? 5).toDouble(),
   );
 }

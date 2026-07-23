@@ -188,12 +188,36 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                             title: Text(e.title),
                             subtitle: Text(
                                 '${e.category} | ${e.date.toLocal().toString().split(' ')[0]}'),
-                            trailing: Text(
-                              'Rs.${e.amount.toStringAsFixed(0)}',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: AppTheme.red,
-                              ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (e.status != 'Approved')
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 6, vertical: 2),
+                                    decoration: BoxDecoration(
+                                      color: e.status == 'Pending'
+                                          ? Colors.orange.withValues(alpha: 0.15)
+                                          : AppTheme.red.withValues(alpha: 0.15),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(e.status,
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          color: e.status == 'Pending'
+                                              ? Colors.orange
+                                              : AppTheme.red,
+                                        )),
+                                  ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'Rs.${e.amount.toStringAsFixed(0)}',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: AppTheme.red,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         )),

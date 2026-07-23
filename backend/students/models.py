@@ -15,6 +15,12 @@ class Student(models.Model):
         ('A+', 'A+'), ('A-', 'A-'), ('B+', 'B+'), ('B-', 'B-'),
         ('AB+', 'AB+'), ('AB-', 'AB-'), ('O+', 'O+'), ('O-', 'O-'),
     ]
+    PLAYING_ROLE_CHOICES = [
+        ('Batsman', 'Batsman'),
+        ('Bowler', 'Bowler'),
+        ('All-rounder', 'All-rounder'),
+        ('Wicket Keeper', 'Wicket Keeper'),
+    ]
 
     full_name = models.CharField(max_length=200)
     father_name = models.CharField(max_length=200)
@@ -31,7 +37,30 @@ class Student(models.Model):
     emergency_contact = models.CharField(max_length=15)
     blood_group = models.CharField(max_length=5, choices=BLOOD_GROUP_CHOICES)
     photo = models.ImageField(upload_to='students/', blank=True)
+    playing_role = models.CharField(
+        max_length=20, choices=PLAYING_ROLE_CHOICES, blank=True
+    )
+    scholarship_percentage = models.DecimalField(
+        max_digits=5, decimal_places=2, default=0,
+        help_text='Scholarship discount percentage (0-100)'
+    )
     is_active = models.BooleanField(default=True)
+    academy = models.ForeignKey(
+        'accounts.Academy', on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='students'
+    )
+    coach = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='coached_students'
+    )
+    parent = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='children'
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='student_profile'
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

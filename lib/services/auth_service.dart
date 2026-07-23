@@ -8,6 +8,10 @@ class AuthService {
     });
     if (data != null && data['access'] != null) {
       await ApiClient.setTokens(data['access'], data['refresh']);
+      final user = Map<String, dynamic>.from(data['user'] ?? {});
+      if (user['id'] != null) {
+        return user;
+      }
       final profile = await ApiClient.get('/auth/profile/');
       return profile;
     }

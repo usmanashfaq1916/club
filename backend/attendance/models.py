@@ -6,6 +6,7 @@ class Attendance(models.Model):
     STATUS_CHOICES = [
         ('Present', 'Present'),
         ('Absent', 'Absent'),
+        ('Late', 'Late'),
         ('Leave', 'Leave'),
     ]
     student = models.ForeignKey(

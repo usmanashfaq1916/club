@@ -48,6 +48,16 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  Future<void> _demoLogin() async {
+    final auth = context.read<AuthProvider>();
+    await auth.demoLogin();
+    if (!mounted) return;
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const HomeScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -141,6 +151,28 @@ class _LoginScreenState extends State<LoginScreen> {
                               )
                             : const Text('Sign In',
                                 style: TextStyle(fontSize: 16)),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 16),
+                Consumer<AuthProvider>(
+                  builder: (context, auth, _) {
+                    return SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: OutlinedButton.icon(
+                        onPressed: auth.isLoading ? null : _demoLogin,
+                        icon: const Icon(Icons.play_circle_fill,
+                            color: AppTheme.primaryGreen),
+                        label: const Text('Demo Login',
+                            style: TextStyle(
+                                fontSize: 15, color: AppTheme.primaryGreen)),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: AppTheme.primaryGreen),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                        ),
                       ),
                     );
                   },

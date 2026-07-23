@@ -21,7 +21,7 @@ class AppConstants {
     'O-',
   ];
   static const List<String> feeMethods = ['Cash', 'UPI', 'Bank Transfer', 'Card'];
-  static const List<String> attendanceStatus = ['Present', 'Absent', 'Leave'];
+  static const List<String> attendanceStatus = ['Present', 'Absent', 'Late', 'Leave'];
   static const List<String> userRoles = ['Admin', 'Coach', 'Parent', 'Student'];
 
   static const List<String> expenseCategories = [
@@ -35,5 +35,8 @@ class AppConstants {
     'Other',
   ];
 
+  static const List<String> playingRoles = [
+    'Batsman', 'Bowler', 'All-rounder', 'Wicket Keeper',
+  ];
   static const List<String> matchResults = ['Win', 'Loss', 'Draw', 'Cancelled'];
 }

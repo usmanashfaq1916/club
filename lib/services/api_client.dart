@@ -1,11 +1,9 @@
 import 'dart:convert';
-import 'dart:io';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class ApiClient {
-  static const _storage = FlutterSecureStorage();
   static const _tokenKey = 'jwt_token';
   static const _refreshKey = 'refresh_token';
 
@@ -17,7 +15,8 @@ class ApiClient {
 
   static Future<String?> getToken() async {
     try {
-      return await _storage.read(key: _tokenKey);
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString(_tokenKey);
     } catch (_) {
       return null;
     }
@@ -25,7 +24,8 @@ class ApiClient {
 
   static Future<String?> getRefreshToken() async {
     try {
-      return await _storage.read(key: _refreshKey);
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString(_refreshKey);
     } catch (_) {
       return null;
     }
@@ -33,15 +33,17 @@ class ApiClient {
 
   static Future<void> setTokens(String access, String refresh) async {
     try {
-      await _storage.write(key: _tokenKey, value: access);
-      await _storage.write(key: _refreshKey, value: refresh);
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_tokenKey, access);
+      await prefs.setString(_refreshKey, refresh);
     } catch (_) {}
   }
 
   static Future<void> clearTokens() async {
     try {
-      await _storage.delete(key: _tokenKey);
-      await _storage.delete(key: _refreshKey);
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_tokenKey);
+      await prefs.remove(_refreshKey);
     } catch (_) {}
   }
 
@@ -89,7 +91,8 @@ class ApiClient {
   static Future<dynamic> uploadFile(
     String path,
     String field,
-    File file, {
+    List<int> fileBytes,
+    String fileName, {
     Map<String, String>? fields,
   }) async {
     final uri = Uri.parse('$baseUrl$path');
@@ -98,7 +101,7 @@ class ApiClient {
     if (token != null) {
       request.headers['Authorization'] = 'Bearer $token';
     }
-    request.files.add(await http.MultipartFile.fromPath(field, file.path));
+    request.files.add(http.MultipartFile.fromBytes(field, fileBytes, filename: fileName));
     if (fields != null) {
       request.fields.addAll(fields);
     }

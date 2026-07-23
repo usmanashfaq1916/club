@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../services/auth_service.dart';
 import '../services/api_client.dart';
 
@@ -16,8 +17,24 @@ class AuthProvider extends ChangeNotifier {
   bool get isAdmin => _user?['role'] == 'Admin';
   bool get isCoach => _user?['role'] == 'Coach';
   bool get isParent => _user?['role'] == 'Parent';
+  int? get academyId => _user?['academy_id'] ?? _user?['academy'];
 
   Future<void> checkAuth() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isDemo = prefs.getBool('isDemo') ?? false;
+    if (isDemo) {
+      _user = {
+        'id': 1,
+        'email': 'admin@yfa.com',
+        'fullName': 'Academy Admin',
+        'full_name': 'Academy Admin',
+        'role': 'Admin',
+        'academy_id': 1,
+        'uid': 'admin001',
+      };
+      notifyListeners();
+      return;
+    }
     if (await _authService.isLoggedIn()) {
       try {
         _user = await _authService.getUserProfile();
@@ -46,6 +63,35 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> demoLogin() async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+    await Future.delayed(const Duration(milliseconds: 800));
+    _user = {
+      'id': 1,
+      'email': 'admin@yfa.com',
+      'fullName': 'Academy Admin',
+      'full_name': 'Academy Admin',
+      'role': 'Admin',
+      'academy_id': 1,
+      'uid': 'admin001',
+    };
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isDemo', true);
+    await ApiClient.setTokens('demo_token', 'demo_refresh');
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('isDemo');
+    await _authService.logout();
+    _user = null;
+    notifyListeners();
+  }
+
   String _formatError(Object e) {
     if (e is ApiException) {
       final msg = e.message;
@@ -57,12 +103,6 @@ class AuthProvider extends ChangeNotifier {
       if (e.statusCode == 500) return 'Server error. Try again later.';
     }
     return 'Login failed. Check your connection.';
-  }
-
-  Future<void> logout() async {
-    await _authService.logout();
-    _user = null;
-    notifyListeners();
   }
 
   Future<bool> register(String email, String password, String fullName,

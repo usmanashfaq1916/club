@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/api_client.dart';
+import '../services/mock_data_service.dart';
 
 class DashboardProvider extends ChangeNotifier {
   int _totalStudents = 0;
@@ -55,8 +56,38 @@ class DashboardProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     } catch (e) {
-      _isLoading = false;
-      notifyListeners();
+      loadMockData();
     }
+  }
+
+  void loadMockData() {
+    _totalStudents = MockDataService.students.length;
+    _activeStudents = MockDataService.students.where((s) => s.isActive).length;
+    _presentToday = 15;
+    _totalToday = 18;
+    _feeCollected = MockDataService.totalFeeCollected;
+    _pendingFees = MockDataService.totalPendingFees;
+    _monthlyIncome = MockDataService.totalFeeCollected + 5000;
+    _monthlyExpenses = MockDataService.totalExpensesAmount;
+    _netProfit = _monthlyIncome - _monthlyExpenses;
+    _recentActivities = MockDataService.recentActivities;
+    _feeDueList = MockDataService.feeDueList;
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  void clear() {
+    _totalStudents = 0;
+    _activeStudents = 0;
+    _presentToday = 0;
+    _totalToday = 0;
+    _feeCollected = 0;
+    _pendingFees = 0;
+    _monthlyIncome = 0;
+    _monthlyExpenses = 0;
+    _netProfit = 0;
+    _recentActivities = [];
+    _feeDueList = [];
+    notifyListeners();
   }
 }

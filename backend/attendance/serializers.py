@@ -13,7 +13,7 @@ class AttendanceSerializer(serializers.ModelSerializer):
 class BulkAttendanceSerializer(serializers.Serializer):
     student_id = serializers.IntegerField()
     date = serializers.DateField()
-    status = serializers.ChoiceField(choices=['Present', 'Absent', 'Leave'])
+    status = serializers.ChoiceField(choices=['Present', 'Absent', 'Late', 'Leave'])
 
     def create(self, validated_data):
         attendance, _ = Attendance.objects.update_or_create(

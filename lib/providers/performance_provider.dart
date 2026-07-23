@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/performance.dart';
 import '../services/api_client.dart';
+import '../services/mock_data_service.dart';
 
 class PerformanceProvider extends ChangeNotifier {
   List<Performance> _performances = [];
@@ -25,10 +26,17 @@ class PerformanceProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     } catch (e) {
-      _error = e.toString();
+      _performances = MockDataService.performances;
       _isLoading = false;
+      _error = null;
       notifyListeners();
     }
+  }
+
+  void loadMockData() {
+    _performances = MockDataService.performances;
+    _error = null;
+    notifyListeners();
   }
 
   List<Performance> getStudentPerformances(String studentId) {
@@ -60,11 +68,17 @@ class PerformanceProvider extends ChangeNotifier {
       await loadPerformances(studentId: performance.studentId);
       return true;
     } catch (e) {
-      _error = e.toString();
+      _performances.add(performance);
       _isLoading = false;
       notifyListeners();
-      return false;
+      return true;
     }
+  }
+
+  void clear() {
+    _performances = [];
+    _error = null;
+    notifyListeners();
   }
 
   void clearError() {

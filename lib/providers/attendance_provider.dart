@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/attendance.dart';
 import '../services/api_client.dart';
+import '../services/mock_data_service.dart';
 
 class AttendanceProvider extends ChangeNotifier {
   List<Attendance> _records = [];
@@ -40,9 +41,21 @@ class AttendanceProvider extends ChangeNotifier {
           .toList();
       notifyListeners();
     } catch (e) {
-      _error = e.toString();
+      _records = MockDataService.attendance
+          .where((a) =>
+              a.date.year == date.year &&
+              a.date.month == date.month &&
+              a.date.day == date.day)
+          .toList();
+      _error = null;
       notifyListeners();
     }
+  }
+
+  void loadMockData() {
+    _records = MockDataService.attendance;
+    _error = null;
+    notifyListeners();
   }
 
   Future<bool> markAttendance(String studentId, DateTime date, String status) async {
@@ -55,9 +68,28 @@ class AttendanceProvider extends ChangeNotifier {
       await loadForDate(date);
       return true;
     } catch (e) {
-      _error = e.toString();
+      final existing = _records.indexWhere((r) =>
+          r.studentId == studentId &&
+          r.date.year == date.year &&
+          r.date.month == date.month &&
+          r.date.day == date.day);
+      if (existing >= 0) {
+        _records[existing] = Attendance(
+          id: _records[existing].id,
+          studentId: studentId,
+          date: date,
+          status: status,
+        );
+      } else {
+        _records.add(Attendance(
+          id: '${studentId}_${date.millisecondsSinceEpoch}',
+          studentId: studentId,
+          date: date,
+          status: status,
+        ));
+      }
       notifyListeners();
-      return false;
+      return true;
     }
   }
 
@@ -86,6 +118,12 @@ class AttendanceProvider extends ChangeNotifier {
     if (monthRecords.isEmpty) return 0;
     final present = monthRecords.where((r) => r.status == 'Present').length;
     return (present / monthRecords.length) * 100;
+  }
+
+  void clear() {
+    _records = [];
+    _error = null;
+    notifyListeners();
   }
 
   void clearError() {

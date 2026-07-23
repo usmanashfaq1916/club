@@ -2,6 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/theme_provider.dart';
+import '../../providers/student_provider.dart';
+import '../../providers/attendance_provider.dart';
+import '../../providers/fee_provider.dart';
+import '../../providers/performance_provider.dart';
+import '../../providers/match_provider.dart';
+import '../../providers/expense_provider.dart';
+import '../../providers/dashboard_provider.dart';
 import '../../config/theme.dart';
 import '../login_screen.dart';
 import '../matches/match_screen.dart';
@@ -112,11 +119,11 @@ class ProfileScreen extends StatelessWidget {
                   () => Navigator.push(context,
                       MaterialPageRoute(builder: (_) => const ReportScreen())),
                 ),
-                if (auth.isCoach)
+                if (auth.isParent || auth.isCoach)
                   _menuItem(
                     context,
                     Icons.visibility,
-                    'Parent Portal View',
+                    auth.isParent ? 'Parent Portal' : 'Parent Portal View',
                     Colors.teal,
                     () => Navigator.push(context,
                         MaterialPageRoute(builder: (_) => const ParentPortalScreen())),
@@ -192,6 +199,13 @@ class ProfileScreen extends StatelessWidget {
           TextButton(
             onPressed: () async {
               await context.read<AuthProvider>().logout();
+              context.read<StudentProvider>().clear();
+              context.read<AttendanceProvider>().clear();
+              context.read<FeeProvider>().clear();
+              context.read<PerformanceProvider>().clear();
+              context.read<MatchProvider>().clear();
+              context.read<ExpenseProvider>().clear();
+              context.read<DashboardProvider>().clear();
               if (ctx.mounted) Navigator.pop(ctx);
               if (context.mounted) {
                 Navigator.pushAndRemoveUntil(

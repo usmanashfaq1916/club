@@ -26,24 +26,25 @@ class _PerformanceScreenState extends State<PerformanceScreen> {
   @override
   void initState() {
     super.initState();
-    _loadLatest();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadAll();
+    });
   }
 
-  void _loadLatest() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final perf = context.read<PerformanceProvider>();
-      final latest = perf.getLatestPerformance(widget.studentId);
-      if (latest != null) {
-        setState(() {
-          _batting = latest.battingRating;
-          _bowling = latest.bowlingRating;
-          _fielding = latest.fieldingRating;
-          _fitness = latest.fitnessRating;
-          _discipline = latest.disciplineRating;
-          _remarksCtrl.text = latest.coachRemarks ?? '';
-        });
-      }
-    });
+  void _loadAll() async {
+    final perf = context.read<PerformanceProvider>();
+    await perf.loadPerformances(studentId: widget.studentId);
+    final latest = perf.getLatestPerformance(widget.studentId);
+    if (latest != null && mounted) {
+      setState(() {
+        _batting = latest.battingRating;
+        _bowling = latest.bowlingRating;
+        _fielding = latest.fieldingRating;
+        _fitness = latest.fitnessRating;
+        _discipline = latest.disciplineRating;
+        _remarksCtrl.text = latest.coachRemarks ?? '';
+      });
+    }
   }
 
   Future<void> _save() async {
@@ -170,6 +171,63 @@ class _PerformanceScreenState extends State<PerformanceScreen> {
                   ],
                 ),
               ),
+            ),
+            const SizedBox(height: 16),
+            Consumer<PerformanceProvider>(
+              builder: (context, pp, _) {
+                final history = pp.getStudentPerformances(widget.studentId);
+                if (history.length < 2) return const SizedBox();
+                return Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Performance Trend',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 16),
+                        SizedBox(
+                          height: 180,
+                          child: LineChart(
+                            LineChartData(
+                              gridData: const FlGridData(show: false),
+                              titlesData: const FlTitlesData(
+                                leftTitles: AxisTitles(
+                                    sideTitles: SideTitles(showTitles: false)),
+                                rightTitles: AxisTitles(
+                                    sideTitles: SideTitles(showTitles: false)),
+                                topTitles: AxisTitles(
+                                    sideTitles: SideTitles(showTitles: false)),
+                              ),
+                              borderData: FlBorderData(show: false),
+                              lineBarsData: [
+                                LineChartBarData(
+                                  spots: List.generate(history.length, (i) {
+                                    final p = history[i];
+                                    return FlSpot(i.toDouble(), p.overallRating);
+                                  }),
+                                  isCurved: true,
+                                  color: AppTheme.primaryGreen,
+                                  barWidth: 3,
+                                  dotData: const FlDotData(show: true),
+                                  belowBarData: BarAreaData(
+                                    show: true,
+                                    color: AppTheme.primaryGreen
+                                        .withValues(alpha: 0.1),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
             const SizedBox(height: 16),
             _buildRatingSlider('Batting', _batting, (v) {

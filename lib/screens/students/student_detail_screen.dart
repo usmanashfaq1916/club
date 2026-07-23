@@ -162,6 +162,8 @@ class StudentDetailScreen extends StatelessWidget {
             const Divider(),
             _infoRow('Batch', student.batch),
             _infoRow('Skill Level', student.skillLevel),
+            if (student.playingRole.isNotEmpty)
+              _infoRow('Playing Role', student.playingRole),
             _infoRow('Join Date', student.joinDate.toLocal().toString().split(' ')[0]),
             _infoRow('Monthly Fee', 'Rs.${student.monthlyFee.toStringAsFixed(0)}'),
           ],

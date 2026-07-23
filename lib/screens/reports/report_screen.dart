@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:printing/printing.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:share_plus/share_plus.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as path_utils;
-import 'dart:io';
 import '../../services/api_client.dart';
 import '../../config/theme.dart';
 
@@ -363,25 +361,19 @@ class ReportScreen extends StatelessWidget {
 
   Future<void> _sharePdf(
       BuildContext context, pw.Document pdf, String fileName) async {
-    if (Platform.isWindows) {
-      final dir = await getTemporaryDirectory();
-      final file = File(path_utils.join(dir.path,
-          '${fileName}_${DateTime.now().millisecondsSinceEpoch}.pdf'));
-      await file.writeAsBytes(await pdf.save());
-      await Share.shareXFiles([XFile(file.path)], text: fileName);
-      return;
-    }
+    final bytes = await pdf.save();
+    final fullName = '${fileName}_${DateTime.now().millisecondsSinceEpoch}.pdf';
     try {
-      await Printing.sharePdf(
-        bytes: await pdf.save(),
-        filename: '${fileName}_${DateTime.now().millisecondsSinceEpoch}.pdf',
-      );
+      await Printing.sharePdf(bytes: bytes, filename: fullName);
     } catch (e) {
-      final dir = await getTemporaryDirectory();
-      final file = File(path_utils.join(dir.path,
-          '${fileName}_${DateTime.now().millisecondsSinceEpoch}.pdf'));
-      await file.writeAsBytes(await pdf.save());
-      await Share.shareXFiles([XFile(file.path)], text: fileName);
+      if (!kIsWeb) {
+        try {
+          await Share.shareXFiles([XFile.fromData(bytes, name: fullName)],
+              text: fileName);
+        } catch (_) {}
+      } else {
+        _showError(context, 'Could not share PDF');
+      }
     }
   }
 

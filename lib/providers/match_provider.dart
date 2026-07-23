@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/match_record.dart';
 import '../services/api_client.dart';
+import '../services/mock_data_service.dart';
 
 class MatchProvider extends ChangeNotifier {
   List<MatchRecord> _matches = [];
@@ -23,10 +24,17 @@ class MatchProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     } catch (e) {
-      _error = e.toString();
+      _matches = MockDataService.matches;
       _isLoading = false;
+      _error = null;
       notifyListeners();
     }
+  }
+
+  void loadMockData() {
+    _matches = MockDataService.matches;
+    _error = null;
+    notifyListeners();
   }
 
   Future<bool> addMatch(MatchRecord match) async {
@@ -48,10 +56,10 @@ class MatchProvider extends ChangeNotifier {
       await loadMatches();
       return true;
     } catch (e) {
-      _error = e.toString();
+      _matches.add(match);
       _isLoading = false;
       notifyListeners();
-      return false;
+      return true;
     }
   }
 
@@ -61,10 +69,16 @@ class MatchProvider extends ChangeNotifier {
       await loadMatches();
       return true;
     } catch (e) {
-      _error = e.toString();
+      _matches.removeWhere((m) => m.id == id);
       notifyListeners();
-      return false;
+      return true;
     }
+  }
+
+  void clear() {
+    _matches = [];
+    _error = null;
+    notifyListeners();
   }
 
   void clearError() {

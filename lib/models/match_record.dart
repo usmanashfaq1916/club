@@ -2,6 +2,7 @@ class MatchRecord {
   final String id;
   final DateTime matchDate;
   final String opponent;
+  final String venue;
   final int runs;
   final int wickets;
   final int catches;
@@ -14,6 +15,7 @@ class MatchRecord {
     required this.id,
     required this.matchDate,
     required this.opponent,
+    this.venue = '',
     this.runs = 0,
     this.wickets = 0,
     this.catches = 0,
@@ -24,28 +26,29 @@ class MatchRecord {
   });
 
   Map<String, dynamic> toMap() => {
-    'id': id,
-    'matchDate': matchDate.toIso8601String(),
+    'match_date': matchDate.toIso8601String().split('T')[0],
     'opponent': opponent,
+    'venue': venue,
     'runs': runs,
     'wickets': wickets,
     'catches': catches,
-    'strikeRate': strikeRate,
-    'economy': economy,
+    'strike_rate': strikeRate.toString(),
+    'economy': economy.toString(),
     'result': result,
-    'isManOfTheMatch': isManOfTheMatch,
+    'is_man_of_the_match': isManOfTheMatch,
   };
 
   factory MatchRecord.fromMap(Map<String, dynamic> map) => MatchRecord(
-    id: map['id'] ?? '',
-    matchDate: DateTime.parse(map['matchDate']),
+    id: map['id']?.toString() ?? '',
+    matchDate: DateTime.parse(map['match_date']),
     opponent: map['opponent'] ?? '',
+    venue: map['venue'] ?? '',
     runs: map['runs'] ?? 0,
     wickets: map['wickets'] ?? 0,
     catches: map['catches'] ?? 0,
-    strikeRate: (map['strikeRate'] ?? 0).toDouble(),
+    strikeRate: (map['strike_rate'] ?? 0).toDouble(),
     economy: (map['economy'] ?? 0).toDouble(),
     result: map['result'] ?? '',
-    isManOfTheMatch: map['isManOfTheMatch'] ?? false,
+    isManOfTheMatch: map['is_man_of_the_match'] ?? false,
   );
 }

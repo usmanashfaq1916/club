@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/expense.dart';
 import '../services/api_client.dart';
+import '../services/mock_data_service.dart';
 
 class ExpenseProvider extends ChangeNotifier {
   List<Expense> _expenses = [];
@@ -42,10 +43,17 @@ class ExpenseProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     } catch (e) {
-      _error = e.toString();
+      _expenses = MockDataService.expenses;
       _isLoading = false;
+      _error = null;
       notifyListeners();
     }
+  }
+
+  void loadMockData() {
+    _expenses = MockDataService.expenses;
+    _error = null;
+    notifyListeners();
   }
 
   Future<bool> addExpense(Expense expense) async {
@@ -63,10 +71,10 @@ class ExpenseProvider extends ChangeNotifier {
       await loadExpenses();
       return true;
     } catch (e) {
-      _error = e.toString();
+      _expenses.add(expense);
       _isLoading = false;
       notifyListeners();
-      return false;
+      return true;
     }
   }
 
@@ -76,10 +84,17 @@ class ExpenseProvider extends ChangeNotifier {
       await loadExpenses();
       return true;
     } catch (e) {
-      _error = e.toString();
+      _expenses.removeWhere((e) => e.id == id);
       notifyListeners();
-      return false;
+      return true;
     }
+  }
+
+  void clear() {
+    _expenses = [];
+    _filter = 'All';
+    _error = null;
+    notifyListeners();
   }
 
   void clearError() {

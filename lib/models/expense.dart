@@ -5,6 +5,7 @@ class Expense {
   final double amount;
   final DateTime date;
   final String? notes;
+  final String status;
 
   Expense({
     required this.id,
@@ -13,23 +14,25 @@ class Expense {
     required this.amount,
     required this.date,
     this.notes,
+    this.status = 'Pending',
   });
 
   Map<String, dynamic> toMap() => {
-    'id': id,
     'title': title,
     'category': category,
-    'amount': amount,
-    'date': date.toIso8601String(),
+    'amount': amount.toString(),
+    'date': date.toIso8601String().split('T')[0],
     'notes': notes,
+    'status': status,
   };
 
   factory Expense.fromMap(Map<String, dynamic> map) => Expense(
-    id: map['id'] ?? '',
+    id: map['id']?.toString() ?? '',
     title: map['title'] ?? '',
     category: map['category'] ?? '',
     amount: (map['amount'] ?? 0).toDouble(),
     date: DateTime.parse(map['date']),
     notes: map['notes'],
+    status: map['status'] ?? 'Pending',
   );
 }

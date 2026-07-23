@@ -14,6 +14,18 @@ from fees.models import Fee
 from expenses.models import Expense
 
 
+def _get_student_qs(user):
+    if user.role == 'Admin':
+        return Student.objects.all()
+    elif user.role == 'Coach':
+        return Student.objects.filter(coach=user)
+    elif user.role == 'Parent':
+        return Student.objects.filter(parent=user)
+    elif user.role == 'Student':
+        return Student.objects.filter(user=user)
+    return Student.objects.none()
+
+
 class BaseReportMixin:
     def _write_header(self, c, title):
         c.setFont("Helvetica-Bold", 18)
@@ -45,7 +57,7 @@ class StudentReportView(BaseReportMixin, APIView):
         buffer = io.BytesIO()
         c = canvas.Canvas(buffer, pagesize=A4)
         self._write_header(c, "Student Report")
-        students = Student.objects.all()
+        students = _get_student_qs(request.user)
         data = [[s.full_name, s.father_name, s.mobile_number, s.batch,
                  f"Rs.{s.monthly_fee:.0f}"] for s in students]
         headers = ['Name', 'Father', 'Mobile', 'Batch', 'Fee']
@@ -67,7 +79,10 @@ class AttendanceReportView(BaseReportMixin, APIView):
         self._write_header(c, "Attendance Report")
         month = request.query_params.get('month', date.today().month)
         year = request.query_params.get('year', date.today().year)
-        records = Attendance.objects.filter(date__month=month, date__year=year)
+        students = _get_student_qs(request.user)
+        records = Attendance.objects.filter(
+            student__in=students, date__month=month, date__year=year
+        )
         data = [[r.student.full_name, str(r.date), r.status] for r in records]
         headers = ['Student', 'Date', 'Status']
         table = self._make_table(data, headers)
@@ -86,7 +101,8 @@ class DefaulterReportView(BaseReportMixin, APIView):
         buffer = io.BytesIO()
         c = canvas.Canvas(buffer, pagesize=A4)
         self._write_header(c, "Fee Defaulter Report")
-        defaulters = Fee.objects.filter(status='Pending')
+        students = _get_student_qs(request.user)
+        defaulters = Fee.objects.filter(student__in=students, status='Pending')
         data = [[f.student.full_name, f.month, f"Rs.{f.monthly_fee:.0f}",
                  str(f.due_date)] for f in defaulters]
         headers = ['Student', 'Month', 'Amount', 'Due Date']
@@ -106,8 +122,18 @@ class FinancialReportView(BaseReportMixin, APIView):
         buffer = io.BytesIO()
         c = canvas.Canvas(buffer, pagesize=A4)
         self._write_header(c, "Financial Report")
-        total_income = Fee.objects.aggregate(s=Sum('paid_amount'))['s'] or 0
-        total_expenses = Expense.objects.aggregate(s=Sum('amount'))['s'] or 0
+        user = request.user
+        if user.role == 'Admin':
+            total_income = Fee.objects.aggregate(s=Sum('paid_amount'))['s'] or 0
+            total_expenses = Expense.objects.aggregate(s=Sum('amount'))['s'] or 0
+        else:
+            students = _get_student_qs(user)
+            total_income = Fee.objects.filter(student__in=students).aggregate(
+                s=Sum('paid_amount')
+            )['s'] or 0
+            total_expenses = Expense.objects.filter(academy=user.academy).aggregate(
+                s=Sum('amount')
+            )['s'] or 0
         net = total_income - total_expenses
 
         c.setFont("Helvetica", 14)
@@ -128,7 +154,8 @@ class PerformanceReportView(BaseReportMixin, APIView):
         buffer = io.BytesIO()
         c = canvas.Canvas(buffer, pagesize=A4)
         self._write_header(c, "Performance Report")
-        performances = Performance.objects.all()[:100]
+        students = _get_student_qs(request.user)
+        performances = Performance.objects.filter(student__in=students)[:100]
         data = [[p.student.full_name, p.batting_rating, p.bowling_rating,
                  p.fielding_rating, p.fitness_rating, p.discipline_rating,
                  f"{p.overall_rating:.1f}"] for p in performances]

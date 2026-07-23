@@ -11,6 +11,7 @@ import 'providers/expense_provider.dart';
 import 'providers/dashboard_provider.dart';
 import 'providers/theme_provider.dart';
 import 'screens/splash_screen.dart';
+import 'widgets/offline_banner.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,7 +43,7 @@ class MyApp extends StatelessWidget {
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: themeProvider.themeMode,
-            home: const SplashScreen(),
+            home: OfflineBannerWrapper(child: const SplashScreen()),
           );
         },
       ),

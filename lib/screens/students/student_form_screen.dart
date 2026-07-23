@@ -1,7 +1,7 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 import '../../models/student.dart';
 import '../../providers/student_provider.dart';
 import '../../services/api_client.dart';
@@ -33,8 +33,10 @@ class _StudentFormScreenState extends State<StudentFormScreen> {
   String _gender = 'Male';
   String _batch = 'Morning';
   String _skillLevel = 'Beginner';
+  String _playingRole = '';
   String _bloodGroup = 'A+';
-  File? _imageFile;
+  Uint8List? _imageBytes;
+  String? _imageName;
   bool _isLoading = false;
   bool _isActive = true;
   DateTime? _selectedDob;
@@ -60,6 +62,7 @@ class _StudentFormScreenState extends State<StudentFormScreen> {
       _gender = s.gender;
       _batch = s.batch;
       _skillLevel = s.skillLevel;
+      _playingRole = s.playingRole;
       _bloodGroup = s.bloodGroup;
       _isActive = s.isActive;
       _selectedDob = s.dateOfBirth;
@@ -80,9 +83,13 @@ class _StudentFormScreenState extends State<StudentFormScreen> {
   }
 
   Future<void> _pickImage() async {
-    final file = await _picker.pickImage(source: ImageSource.gallery);
-    if (file != null) {
-      setState(() => _imageFile = File(file.path));
+    final xFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (xFile != null) {
+      final bytes = await xFile.readAsBytes();
+      setState(() {
+        _imageBytes = bytes;
+        _imageName = xFile.name;
+      });
     }
   }
 
@@ -127,10 +134,13 @@ class _StudentFormScreenState extends State<StudentFormScreen> {
     final age = calculateAge(_selectedDob!);
 
     String? photoUrl = widget.student?.photoUrl;
-    if (_imageFile != null) {
+    if (_imageBytes != null) {
       try {
         final result = await ApiClient.uploadFile(
-            '/students/$uuid/upload-photo/', 'photo', _imageFile!);
+            '/students/$uuid/upload-photo/',
+            'photo',
+            _imageBytes!,
+            _imageName ?? 'photo.jpg');
         photoUrl = result['photo_url'];
       } catch (_) {}
     }
@@ -150,6 +160,7 @@ class _StudentFormScreenState extends State<StudentFormScreen> {
       joinDate: widget.student?.joinDate ?? DateTime.now(),
       batch: _batch,
       skillLevel: _skillLevel,
+      playingRole: _playingRole,
       monthlyFee: double.tryParse(_feeCtrl.text) ?? 0,
       emergencyContact: _emergencyCtrl.text.trim(),
       bloodGroup: _bloodGroup,
@@ -208,12 +219,8 @@ class _StudentFormScreenState extends State<StudentFormScreen> {
                         radius: 50,
                         backgroundColor:
                             AppTheme.primaryGreen.withValues(alpha: 0.1),
-                        backgroundImage: _imageFile != null
-                            ? FileImage(_imageFile!) as ImageProvider<Object>
-                            : (widget.student?.photoUrl != null
-                                ? NetworkImage(widget.student!.photoUrl!) as ImageProvider<Object>
-                                : null),
-                        child: _imageFile == null &&
+                        backgroundImage: _buildImageProvider(),
+                        child: _imageBytes == null &&
                                 widget.student?.photoUrl == null
                             ? const Icon(Icons.camera_alt,
                                 size: 30, color: AppTheme.primaryGreen)
@@ -360,6 +367,18 @@ class _StudentFormScreenState extends State<StudentFormScreen> {
                 ],
               ),
               const SizedBox(height: 12),
+              DropdownButtonFormField<String>(
+                value: _playingRole.isEmpty ? null : _playingRole,
+                decoration: const InputDecoration(
+                    labelText: 'Playing Role',
+                    prefixIcon: Icon(Icons.sports_cricket)),
+                items: AppConstants.playingRoles
+                    .map((r) => DropdownMenuItem(
+                        value: r, child: Text(r)))
+                    .toList(),
+                onChanged: (v) => setState(() => _playingRole = v ?? ''),
+              ),
+              const SizedBox(height: 12),
               Row(
                 children: [
                   Expanded(
@@ -429,6 +448,14 @@ class _StudentFormScreenState extends State<StudentFormScreen> {
         ),
       ),
     );
+  }
+
+  ImageProvider<Object>? _buildImageProvider() {
+    if (_imageBytes != null) return MemoryImage(_imageBytes!);
+    if (widget.student?.photoUrl != null) {
+      return NetworkImage(widget.student!.photoUrl!);
+    }
+    return null;
   }
 
   Widget _buildSectionTitle(String title) {

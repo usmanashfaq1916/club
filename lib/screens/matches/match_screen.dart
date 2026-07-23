@@ -16,6 +16,7 @@ class MatchScreen extends StatefulWidget {
 class _MatchScreenState extends State<MatchScreen> {
   final _formKey = GlobalKey<FormState>();
   final _opponentCtrl = TextEditingController();
+  final _venueCtrl = TextEditingController();
   final _runsCtrl = TextEditingController();
   final _wicketsCtrl = TextEditingController();
   final _catchesCtrl = TextEditingController();
@@ -36,6 +37,7 @@ class _MatchScreenState extends State<MatchScreen> {
   @override
   void dispose() {
     _opponentCtrl.dispose();
+    _venueCtrl.dispose();
     _runsCtrl.dispose();
     _wicketsCtrl.dispose();
     _catchesCtrl.dispose();
@@ -50,6 +52,7 @@ class _MatchScreenState extends State<MatchScreen> {
       id: const Uuid().v4(),
       matchDate: _matchDate,
       opponent: _opponentCtrl.text.trim(),
+      venue: _venueCtrl.text.trim(),
       runs: int.tryParse(_runsCtrl.text) ?? 0,
       wickets: int.tryParse(_wicketsCtrl.text) ?? 0,
       catches: int.tryParse(_catchesCtrl.text) ?? 0,
@@ -67,6 +70,7 @@ class _MatchScreenState extends State<MatchScreen> {
             backgroundColor: Colors.green),
       );
       _opponentCtrl.clear();
+      _venueCtrl.clear();
       _runsCtrl.clear();
       _wicketsCtrl.clear();
       _catchesCtrl.clear();
@@ -109,6 +113,13 @@ class _MatchScreenState extends State<MatchScreen> {
                             prefixIcon: Icon(Icons.sports)),
                         validator: (v) =>
                             v == null || v.isEmpty ? 'Required' : null,
+                      ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _venueCtrl,
+                        decoration: const InputDecoration(
+                            labelText: 'Venue',
+                            prefixIcon: Icon(Icons.location_on)),
                       ),
                       const SizedBox(height: 12),
                       Row(children: [
@@ -218,8 +229,10 @@ class _MatchScreenState extends State<MatchScreen> {
                               ),
                             ),
                             title: Text('vs ${m.opponent}'),
-                            subtitle: Text(
-                                'Runs: ${m.runs} | Wkts: ${m.wickets}'),
+                            subtitle: Text([
+                              if (m.venue.isNotEmpty) m.venue,
+                              'Runs: ${m.runs} | Wkts: ${m.wickets}',
+                            ].join(' • ')),
                             trailing: Text(m.result,
                                 style: TextStyle(
                                   color: m.result == 'Win'

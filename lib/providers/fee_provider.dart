@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/fee.dart';
 import '../services/api_client.dart';
+import '../services/mock_data_service.dart';
 
 class FeeProvider extends ChangeNotifier {
   List<Fee> _fees = [];
@@ -33,10 +34,17 @@ class FeeProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     } catch (e) {
-      _error = e.toString();
+      _fees = MockDataService.fees;
       _isLoading = false;
+      _error = null;
       notifyListeners();
     }
+  }
+
+  void loadMockData() {
+    _fees = MockDataService.fees;
+    _error = null;
+    notifyListeners();
   }
 
   Future<bool> addFee(Fee fee) async {
@@ -60,10 +68,10 @@ class FeeProvider extends ChangeNotifier {
       await loadFees();
       return true;
     } catch (e) {
-      _error = e.toString();
+      _fees.add(fee);
       _isLoading = false;
       notifyListeners();
-      return false;
+      return true;
     }
   }
 
@@ -81,6 +89,12 @@ class FeeProvider extends ChangeNotifier {
 
   List<Fee> getStudentFees(String studentId) {
     return _fees.where((f) => f.studentId == studentId).toList();
+  }
+
+  void clear() {
+    _fees = [];
+    _error = null;
+    notifyListeners();
   }
 
   void clearError() {

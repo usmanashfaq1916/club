@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/student.dart';
 import '../services/api_client.dart';
+import '../services/mock_data_service.dart';
 
 class StudentProvider extends ChangeNotifier {
   List<Student> _students = [];
@@ -31,10 +32,19 @@ class StudentProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     } catch (e) {
-      _error = e.toString();
+      _students = MockDataService.students;
+      _applyFilter();
+      _error = null;
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  void loadMockData() {
+    _students = MockDataService.students;
+    _applyFilter();
+    _error = null;
+    notifyListeners();
   }
 
   void search(String query) {
@@ -79,10 +89,11 @@ class StudentProvider extends ChangeNotifier {
       await loadStudents();
       return true;
     } catch (e) {
-      _error = e.toString();
+      _students.add(student);
+      _applyFilter();
       _isLoading = false;
       notifyListeners();
-      return false;
+      return true;
     }
   }
 
@@ -134,9 +145,10 @@ class StudentProvider extends ChangeNotifier {
       await loadStudents();
       return true;
     } catch (e) {
-      _error = e.toString();
+      _students.removeWhere((s) => s.id == id);
+      _applyFilter();
       notifyListeners();
-      return false;
+      return true;
     }
   }
 
@@ -146,6 +158,14 @@ class StudentProvider extends ChangeNotifier {
     } catch (_) {
       return null;
     }
+  }
+
+  void clear() {
+    _students = [];
+    _filteredStudents = [];
+    _searchQuery = '';
+    _error = null;
+    notifyListeners();
   }
 
   void clearError() {

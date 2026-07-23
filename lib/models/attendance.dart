@@ -12,15 +12,14 @@ class Attendance {
   });
 
   Map<String, dynamic> toMap() => {
-    'id': id,
-    'studentId': studentId,
-    'date': date.toIso8601String(),
+    'student_id': studentId,
+    'date': date.toIso8601String().split('T')[0],
     'status': status,
   };
 
   factory Attendance.fromMap(Map<String, dynamic> map) => Attendance(
-    id: map['id'] ?? '',
-    studentId: map['studentId'] ?? '',
+    id: map['id']?.toString() ?? '',
+    studentId: map['student']?.toString() ?? map['student_id']?.toString() ?? '',
     date: DateTime.parse(map['date']),
     status: map['status'] ?? '',
   );
